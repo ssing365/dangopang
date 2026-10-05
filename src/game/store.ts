@@ -123,7 +123,7 @@ export const canAct = (s: Pick<GameState, 'phase' | 'orderReadyAt'>, side: SideS
   s.phase === 'playing' && t >= side.stunUntil && t >= s.orderReadyAt
 
 /** 상대 칸 이름 */
-export const opponentName = (mode: Mode) => (mode === 'online' ? '친구' : 'CPU')
+export const opponentName = (mode: Mode) => (mode === 'online' ? '친구' : '당고봇')
 
 const otherOf = (side: Side): Side => (side === 'player' ? 'cpu' : 'player')
 
