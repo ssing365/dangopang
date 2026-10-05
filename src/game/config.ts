@@ -38,9 +38,9 @@ export const GAME = {
 export type Difficulty = 'easy' | 'normal' | 'hard'
 
 export const DIFFICULTY: Record<Difficulty, { label: string; reactionMs: [number, number]; mistakeRate: number }> = {
-  easy: { label: '쉬움', reactionMs: [700, 1100], mistakeRate: 0.15 },
-  normal: { label: '보통', reactionMs: [450, 800], mistakeRate: 0.08 },
-  hard: { label: '어려움', reactionMs: [300, 550], mistakeRate: 0.03 },
+  easy: { label: '쉬움', reactionMs: [1300, 1900], mistakeRate: 0.25 },
+  normal: { label: '보통', reactionMs: [1000, 1500], mistakeRate: 0.2 },
+  hard: { label: '어려움', reactionMs: [700, 1100], mistakeRate: 0.15 },
 }
 
 export const SIZES = {
