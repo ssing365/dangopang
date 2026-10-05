@@ -96,6 +96,16 @@ export const HAPTICS = {
   miss: [30, 40, 30] as number | number[],
 }
 
+/** 사운드 볼륨 (0~1) */
+export const SOUND = {
+  bgmVolume: 0.35,
+  popVolume: 0.9,
+  newDangoVolume: 0.6,
+  completeVolume: 0.8,
+  newOrderVolume: 0.6,
+  wrongVolume: 0.8,
+}
+
 /** 친구 대전(PeerJS P2P) 설정 */
 export const NET = {
   /** PeerJS 공개 시그널링 서버에서 쓰는 peer id 접두사 (뒤에 방 코드가 붙음) */

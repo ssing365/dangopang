@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { GAME, HAPTICS, NET, type DangoColor, type Difficulty } from './config'
 import { isCorrect, makeInitialTrayColors, makeOrder, pickRefillColor } from './rules'
 import { vibrate } from './haptics'
+import { playComplete, playNewDango, playNewOrder, playPop, playWrong } from './sound'
 import type { NetMsg, NetRole } from '../net/protocol'
 
 export type Side = 'player' | 'cpu'
@@ -262,6 +263,13 @@ export const useGame = create<GameState>((set, get) => ({
     const { patch, hit, completed } = place(s, 'player', ball.color, landAt, landAt, !guest)
 
     vibrate(hit ? HAPTICS.hit : HAPTICS.miss)
+    if (hit) {
+      // 착지 순간에 맞춰 n번째 알 소리, 빈 트레이 칸이 다시 채워지는 소리
+      playPop(s.player.stack.length, duration)
+      playNewDango(duration)
+    } else {
+      playWrong(landAt - t)
+    }
 
     set({
       ...patch,
@@ -375,3 +383,13 @@ export const useGame = create<GameState>((set, get) => ({
     })
   },
 }))
+
+// 주문서 완성 소리: 완성 처리 경로(내 탭 / CPU / 친구 대전 메시지)가 여러 개라 상태 변화를 보고 한 곳에서 낸다.
+// 화면 반영과 같이 마지막 알이 꽂히는 순간(lastCompletion.at)에 맞춘다.
+useGame.subscribe((s, prev) => {
+  const last = s.lastCompletion
+  if (!last || last === prev.lastCompletion) return
+  const delay = last.at - now()
+  if (last.side === 'player') playComplete(delay)
+  playNewOrder(delay)
+})
