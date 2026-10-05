@@ -24,7 +24,7 @@ export function startCpuBot() {
   const step = () => {
     const s = useGame.getState()
     const t = performance.now()
-    if (s.phase !== 'playing') return schedule(100)
+    if (s.phase !== 'playing' || s.mode !== 'cpu') return schedule(100)
 
     // 스턴 중이거나 새 주문서를 읽는 중이면, 풀린 뒤 다시 반응 시간만큼 기다림
     const blockedUntil = Math.max(s.cpu.stunUntil, s.orderReadyAt)

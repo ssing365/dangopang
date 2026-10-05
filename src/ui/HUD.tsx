@@ -1,5 +1,5 @@
 import { GAME } from '../game/config'
-import { useGame, type Side } from '../game/store'
+import { opponentName, useGame, type Side } from '../game/store'
 import { AssetImg } from './AssetImg'
 import { useNow } from './useNow'
 import { useAfter } from './useAfter'
@@ -25,10 +25,11 @@ export function Score({ side }: { side: Side }) {
   const landed = useAfter(last?.side === side ? last.at : undefined)
   const score = landed ? rawScore : rawScore - 1
   const isCpu = side === 'cpu'
+  const name = opponentName(useGame((s) => s.mode))
   return (
     <div className={`score ${side}`}>
       {isCpu ? (
-        <AssetImg name="cpu_avatar.png" className="avatar" alt="CPU" fallback={<div className="avatar avatar-fallback">CPU</div>} />
+        <AssetImg name="cpu_avatar.png" className="avatar" alt={name} fallback={<div className="avatar avatar-fallback">{name}</div>} />
       ) : (
         <AssetImg name="icon_star.png" className="avatar star" fallback={<div className="avatar avatar-fallback me">나</div>} />
       )}
@@ -59,6 +60,7 @@ function useRecentCompletion() {
 
 export function CompletionToast() {
   const last = useRecentCompletion()
+  const name = opponentName(useGame((s) => s.mode))
   if (!last) return null
   const mine = last.side === 'player'
   const text = mine
@@ -66,8 +68,8 @@ export function CompletionToast() {
       ? '간발의 차로 내가 먼저!'
       : '내가 먼저 완성!'
     : last.close
-      ? '간발의 차로 CPU가 먼저…'
-      : 'CPU가 먼저 완성…'
+      ? `간발의 차로 ${name}가 먼저…`
+      : `${name}가 먼저 완성…`
   return (
     <div key={last.at} className={`toast ${last.side}`}>
       {text}

@@ -521,3 +521,47 @@ button {
     opacity: 0;
   }
 }
+
+/* 친구 대전 */
+.sub-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 0;
+  border-radius: 20px;
+  font-size: 19px;
+  color: var(--pink-deep);
+  background: #fff;
+  box-shadow: 0 4px 0 #f0d3da;
+  transition: transform 0.08s;
+}
+.sub-btn:active {
+  transform: translateY(3px) scale(0.98);
+  box-shadow: 0 1px 0 #f0d3da;
+}
+.net-notice {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #fde8ee;
+  color: var(--pink-deep);
+  font-size: 15px;
+}
+.lobby-title {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: normal;
+  color: var(--pink-deep);
+}
+.room-code {
+  margin: -6px 0 16px;
+  font-size: 44px;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+}
+.sub.small {
+  margin: 14px 0 0;
+  font-size: 14px;
+}
+.big-btn:disabled {
+  opacity: 0.5;
+}

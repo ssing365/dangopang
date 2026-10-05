@@ -21,6 +21,7 @@ npm run build    # 타입체크 + 프로덕션 빌드
   - `store.ts`: zustand 상태와 액션. 양쪽 공통 규칙은 `place()` 한 곳에 있다.
   - `cpuBot.ts`: setTimeout 기반 CPU 봇
   - `screenRegistry.ts`: View 간 화면 좌표 변환(내 꼬치 슬롯 → 앱 기준 px)
+- `src/net/` — 친구 대전(PeerJS P2P). `online.ts`: 방 만들기/들어가기(`?room=CODE`)/나가기, ping 으로 끊김 감지. `protocol.ts`: 메시지 타입
 - `src/scene/` — R3F 씬 (Dango, Skewer, Tray, OrderBoard, FlightLayer 등)
 - `src/ui/` — DOM HUD / 시작·결과 화면 / 훅(`useNow`, `useAfter`)
 
@@ -39,6 +40,7 @@ npm run build    # 타입체크 + 프로덕션 빌드
 - 주문서는 양쪽이 공유한다. 먼저 완성한 쪽이 +1 을 얻고, 진 쪽의 진행은 리셋된다.
 - 트레이에는 항상 모든 색이 최소 1개씩 있도록 리필한다(`pickRefillColor`).
 - 시간은 모두 `performance.now()` 기준이다.
+- **친구 대전**: 내부 side 이름은 그대로(`player` = 나, `cpu` = 친구). 각자 자기 탭은 로컬에서 바로 판정하고 `place` 를 보내지만, 주문서 생성과 완성 판정은 **호스트만** 한다(게스트의 마지막 알은 `pendingComplete` 로 보류 → 호스트의 `complete` 로 확정). 기기마다 `performance.now()` 가 다르니 메시지에 절대 시각을 넣지 않는다. store 는 net 을 import 하지 않고 `setOutbox` 로 송신 함수를 주입받는다.
 
 ## 에셋
 

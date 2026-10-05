@@ -95,3 +95,32 @@ export const HAPTICS = {
   hit: 12 as number | number[],
   miss: [30, 40, 30] as number | number[],
 }
+
+/** 친구 대전(PeerJS P2P) 설정 */
+export const NET = {
+  /** PeerJS 공개 시그널링 서버에서 쓰는 peer id 접두사 (뒤에 방 코드가 붙음) */
+  peerPrefix: 'dangopang-',
+  codeLength: 4,
+  /** 헷갈리는 글자(0/O, 1/I)는 뺀 방 코드 문자 */
+  codeChars: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789',
+  /** 게스트가 방에 붙기까지 기다리는 최대 시간 */
+  connectTimeoutMs: 12000,
+  /** 연결 확인용 ping 간격 / 이 시간 동안 아무 메시지도 없으면 끊긴 것으로 본다 */
+  pingMs: 1500,
+  deadMs: 6000,
+  /** 게스트: 내 타이머가 끝난 뒤 호스트의 최종 점수를 기다리는 최대 시간 */
+  endWaitMs: 2500,
+  /** STUN 은 기본, TURN 은 환경변수가 있을 때만 (LTE 등에서 직접 연결이 안 될 때 중계) */
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    ...(import.meta.env.VITE_TURN_URL
+      ? [
+          {
+            urls: import.meta.env.VITE_TURN_URL as string,
+            username: import.meta.env.VITE_TURN_USER as string,
+            credential: import.meta.env.VITE_TURN_PASS as string,
+          },
+        ]
+      : []),
+  ] as RTCIceServer[],
+}

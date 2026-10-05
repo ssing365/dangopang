@@ -3,7 +3,8 @@ import { Canvas } from '@react-three/fiber'
 import { View } from '@react-three/drei'
 import { LAYOUT } from './game/config'
 import { startCpuBot } from './game/cpuBot'
-import { useGame } from './game/store'
+import { opponentName, useGame } from './game/store'
+import { joinRoom, roomCodeFromUrl } from './net/online'
 import { APP_ID } from './game/screenRegistry'
 import { FrameClear } from './scene/FrameClear'
 import { OrderBoardScene } from './scene/OrderBoard'
@@ -14,6 +15,7 @@ import { AssetImg } from './ui/AssetImg'
 import { ColumnResult, CompletionToast, Countdown, Score, StunBadge, Timer } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { ResultScreen } from './ui/ResultScreen'
+import { LobbyScreen } from './ui/LobbyScreen'
 
 /** 모바일 브라우저 기본 제스처(확대/스크롤/길게누르기 메뉴) 막기 */
 function useBlockBrowserGestures() {
@@ -36,6 +38,13 @@ function useBlockBrowserGestures() {
 export default function App() {
   const appRef = useRef<HTMLDivElement>(null!)
   useBlockBrowserGestures()
+  const mode = useGame((s) => s.mode)
+
+  // 친구가 보낸 방 링크(?room=CODE)로 들어오면 바로 접속
+  useEffect(() => {
+    const code = roomCodeFromUrl()
+    if (code) joinRoom(code)
+  }, [])
 
   useEffect(() => {
     const id = setInterval(() => useGame.getState().tick(), 50)
@@ -71,7 +80,7 @@ export default function App() {
 
         <section className="mid">
           <div className="col cpu">
-            <span className="col-label">CPU</span>
+            <span className="col-label">{opponentName(mode)}</span>
             <AssetImg name="plate.png" className="plate" fallback={<div className="plate plate-fallback" />} />
             <View id="view-cpu" className="view" index={3}>
               <SkewerScene side="cpu" trackId="view-cpu" />
@@ -121,6 +130,7 @@ export default function App() {
 
       <Countdown />
       <StartScreen />
+      <LobbyScreen />
       <ResultScreen />
     </div>
   )
