@@ -15,12 +15,15 @@ export function LobbyScreen() {
   if (phase !== 'menu' || mode !== 'online') return null
 
   const link = roomLink(code)
-  const share = async () => {
-    try {
-      if (navigator.share) return await navigator.share({ title: '당고팡', text: '당고팡 한판 붙자!', url: link })
-      await navigator.clipboard.writeText(link)
+  const copy = async () => {
+    if (await copyText(link)) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
+    }
+  }
+  const share = async () => {
+    try {
+      await navigator.share({ title: '당고팡', text: '당고팡 한판 붙자!', url: link })
     } catch {
       // 공유 창을 닫은 경우 등은 무시
     }
@@ -54,9 +57,14 @@ export function LobbyScreen() {
           <>
             <p className="sub">이 링크를 친구에게 보내세요</p>
             <div className="room-code">{code || '…'}</div>
-            <button className="big-btn" onClick={share} disabled={!code}>
-              {copied ? '복사했어요!' : '링크 보내기'}
+            <button className="big-btn" onClick={copy} disabled={!code}>
+              {copied ? '복사했어요!' : '링크 복사'}
             </button>
+            {'share' in navigator && (
+              <button className="text-btn" onClick={share} disabled={!code}>
+                다른 앱으로 보내기
+              </button>
+            )}
             <p className="sub small">친구를 기다리는 중…</p>
           </>
         ) : (
@@ -69,4 +77,23 @@ export function LobbyScreen() {
       </div>
     </div>
   )
+}
+
+/** 클립보드 복사. Clipboard API 가 막힌 환경(일부 인앱 브라우저 등)에선 execCommand 로 대체 */
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    ta.setAttribute('readonly', '')
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    const ok = document.execCommand('copy')
+    ta.remove()
+    return ok
+  }
 }
