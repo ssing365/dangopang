@@ -2,11 +2,11 @@
 // 색상 / 크기 / 타이밍 / 난이도는 여기만 고치면 된다.
 
 export const DANGO_COLORS = {
-  sakura: { label: '벚꽃', hex: '#f6a9c0', sheen: '#fff2f6' },
-  white: { label: '흰색', hex: '#fbf5ea', sheen: '#ffffff' },
-  mugwort: { label: '쑥', hex: '#a9d791', sheen: '#f1ffe6' },
-  pumpkin: { label: '단호박', hex: '#fad884', sheen: '#fff8dc' },
-  mitarashi: { label: '미타라시', hex: '#d9a271', sheen: '#ffe9d2' },
+  sakura: { label: '벚꽃', hex: '#f79bb7', sheen: '#ffe4ec' },
+  white: { label: '흰색', hex: '#fff9ee', sheen: '#fff6e8' },
+  mugwort: { label: '쑥', hex: '#9fcd7c', sheen: '#eaffd8' },
+  pumpkin: { label: '단호박', hex: '#fbcf5f', sheen: '#fff3cc' },
+  mitarashi: { label: '미타라시', hex: '#b9784a', sheen: '#ffdcc0' },
 } as const
 
 export type DangoColor = keyof typeof DANGO_COLORS
@@ -58,21 +58,54 @@ export const SIZES = {
   /** 대기 중 숨쉬기 진폭 */
   breatheAmp: 0.025,
   breatheSpeed: 2.2,
+  /** 손으로 빚은 듯한 울퉁불퉁함 (반지름 대비 비율) */
+  lumpAmp: 0.035,
+  lumpFreq: 1.6,
+  /** 모양 변형 가짓수 (seed 로 고름) */
+  lumpVariants: 5,
 }
 
 export const MATERIAL = {
-  roughness: 0.82,
-  sheen: 1,
-  sheenRoughness: 0.45,
-  clearcoat: 0.05,
+  /** 넓고 부드럽게 퍼지는 광택 (낮을수록 반짝, 높을수록 가루처럼 무광) */
+  roughness: 0.55,
+  /** 기본 반사 세기. 1 이면 고무/플라스틱처럼 하이라이트가 또렷하다 */
+  specular: 0.55,
+  sheen: 0.7,
+  sheenRoughness: 0.6,
+  /** 또렷한 코팅 광택은 고무처럼 보여서 아주 약하게만 */
+  clearcoat: 0.12,
+  clearcoatRoughness: 0.5,
+  /** 반죽 결 요철 세기 */
+  bumpScale: 0.3,
+  /** 그림자 쪽이 회색으로 죽지 않게 자기 색으로 살짝 띄움 */
+  emissive: 0.08,
+}
+
+/** 당고 표면 절차적 텍스처 */
+export const TEXTURE = {
+  /** 텍스처 세로 해상도 (가로는 2배) */
+  size: 256,
+  /** 반죽 결 촘촘함 */
+  grainFreq: 30,
+  /** 색 얼룩 크기 (작을수록 큰 얼룩) */
+  mottleFreq: 4,
+  /** 색 얼룩 세기 (0~1) */
+  mottle: 0.1,
 }
 
 export const LIGHTS = {
-  ambient: 0.95,
-  warmColor: '#fff1dc',
-  warm: 1.7,
+  ambient: 0.5,
+  /** 반구광: 위는 밝은 크림, 아래는 따뜻한 복숭아색 → 그림자가 따뜻하게 */
+  skyColor: '#fffaf2',
+  groundColor: '#f6d9c4',
+  hemi: 0.95,
+  warmColor: '#fff4e4',
+  warm: 2.0,
   fillColor: '#e6efff',
   fill: 0.45,
+  /** 뒤쪽 위에서 비추는 하얀 림 라이트: 알 테두리가 빛나서 입체감이 생김 */
+  rimColor: '#ffffff',
+  rim: 1.6,
   /** CPU 쪽은 살짝 어둡게 */
   cpuDim: 0.88,
 }
