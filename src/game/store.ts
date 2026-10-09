@@ -42,6 +42,8 @@ export interface TrayBall {
   flying: boolean
   /** 탭 시 눌림 스프링 트리거 */
   pokeAt: number
+  /** 리필로 새로 채워진 알 (시바가 배달해 온다). 처음 깔린 트레이는 false */
+  delivered?: boolean
 }
 
 export interface ScreenPoint {
@@ -334,7 +336,7 @@ export const useGame = create<GameState>((set, get) => ({
           if (b.slot !== f.slot) return b
           if (f.kind === 'miss') return { ...b, flying: false, pokeAt: t }
           const remaining = tray.filter((o) => o.slot !== f.slot).map((o) => o.color)
-          return { slot: b.slot, uid: nextUid(), color: pickRefillColor(remaining), flying: false, pokeAt: 0 }
+          return { slot: b.slot, uid: nextUid(), color: pickRefillColor(remaining), flying: false, pokeAt: 0, delivered: true }
         })
       }
       patch.tray = tray

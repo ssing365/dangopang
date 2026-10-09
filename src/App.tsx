@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { View } from '@react-three/drei'
 import { LAYOUT } from './game/config'
 import { startCpuBot } from './game/cpuBot'
-import { opponentName, useGame } from './game/store'
+import { useGame } from './game/store'
 import { joinRoom, roomCodeFromUrl } from './net/online'
 import { APP_ID } from './game/screenRegistry'
 import { FrameClear } from './scene/FrameClear'
@@ -12,10 +12,11 @@ import { SkewerScene } from './scene/Skewer'
 import { TrayScene } from './scene/Tray'
 import { FlightLayer } from './scene/FlightLayer'
 import { AssetImg } from './ui/AssetImg'
-import { ColumnResult, CompletionToast, Countdown, Score, StunBadge, Timer } from './ui/HUD'
+import { ColumnHead, ColumnResult, CompletionToast, Countdown, StunBadge, Timer } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { ResultScreen } from './ui/ResultScreen'
 import { LobbyScreen } from './ui/LobbyScreen'
+import { BgmToggle } from './ui/BgmToggle'
 
 /** 모바일 브라우저 기본 제스처(확대/스크롤/길게누르기 메뉴) 막기 */
 function useBlockBrowserGestures() {
@@ -38,7 +39,6 @@ function useBlockBrowserGestures() {
 export default function App() {
   const appRef = useRef<HTMLDivElement>(null!)
   useBlockBrowserGestures()
-  const mode = useGame((s) => s.mode)
 
   // 친구가 보낸 방 링크(?room=CODE)로 들어오면 바로 접속
   useEffect(() => {
@@ -67,20 +67,18 @@ export default function App() {
     <div id={APP_ID} ref={appRef} className="app" style={vars}>
       <div className="layout">
         <section className="top">
-          <Score side="cpu" />
           <div className="order-card">
             <span className="tag">주문서</span>
             <View id="view-order" className="view" index={2}>
               <OrderBoardScene />
             </View>
           </div>
-          <Score side="player" />
           <Timer />
         </section>
 
         <section className="mid">
           <div className="col cpu">
-            <span className="col-label">{opponentName(mode)}</span>
+            <ColumnHead side="cpu" />
             <AssetImg name="plate.png" className="plate" fallback={<div className="plate plate-fallback" />} />
             <View id="view-cpu" className="view" index={3}>
               <SkewerScene side="cpu" trackId="view-cpu" />
@@ -89,7 +87,7 @@ export default function App() {
             <ColumnResult side="cpu" />
           </div>
           <div className="col me">
-            <span className="col-label">내 꼬치</span>
+            <ColumnHead side="player" />
             <AssetImg name="plate.png" className="plate" fallback={<div className="plate plate-fallback" />} />
             <View id="view-player" className="view" index={4}>
               <SkewerScene side="player" trackId="view-player" />
@@ -132,6 +130,7 @@ export default function App() {
       <StartScreen />
       <LobbyScreen />
       <ResultScreen />
+      <BgmToggle />
     </div>
   )
 }

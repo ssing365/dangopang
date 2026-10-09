@@ -1,11 +1,13 @@
+import { Suspense } from 'react'
 import { ContactShadows, PerspectiveCamera } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
-import { SIZES } from '../game/config'
+import { DELIVERY, SIZES } from '../game/config'
 import { TRAY_SLOTS } from '../game/rules'
 import { useGame, type TrayBall } from '../game/store'
 import { appRect, projectMySlot } from '../game/screenRegistry'
 import { Dango } from './Dango'
+import { DeliveryShiba } from './DeliveryShiba'
 import { SoftLights } from './Lights'
 
 function TrayDango({ ball }: { ball: TrayBall }) {
@@ -36,7 +38,8 @@ function TrayDango({ ball }: { ball: TrayBall }) {
       hidden={ball.flying}
       pokeAt={ball.pokeAt}
       popIn
-      popDelay={60}
+      // 리필 알은 시바가 옆에 도착할 즈음 놓인다
+      popDelay={ball.delivered ? DELIVERY.arriveMs - 40 : 60}
       seed={ball.slot}
     >
       {/* 손가락용으로 조금 넉넉한 투명 히트 영역 */}
@@ -50,14 +53,20 @@ function TrayDango({ ball }: { ball: TrayBall }) {
 
 export function TrayScene() {
   const tray = useGame((s) => s.tray)
+  const groundY = -0.44
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 6.2, 5.2]} fov={36} onUpdate={(c) => c.lookAt(0, 0, 0.15)} />
+      <PerspectiveCamera makeDefault position={[0, 6.2, 5.2]} fov={29} onUpdate={(c) => c.lookAt(0, 0, 0.15)} />
       <SoftLights />
       {tray.map((b) => (
         <TrayDango key={b.uid} ball={b} />
       ))}
-      <ContactShadows position={[0, -0.44, 0]} opacity={0.4} scale={9} blur={2} far={2} resolution={256} color="#8a5a6a" />
+      <Suspense fallback={null}>
+        {tray.map((b) =>
+          b.delivered ? <DeliveryShiba key={b.uid} color={b.color} position={TRAY_SLOTS[b.slot]} groundY={groundY} /> : null,
+        )}
+      </Suspense>
+      <ContactShadows position={[0, groundY, 0]} opacity={0.4} scale={9} blur={2} far={2} resolution={256} color="#62371f" />
     </>
   )
 }

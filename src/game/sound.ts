@@ -19,6 +19,16 @@ let ctx: Ctx | null = null
 const buffers = new Map<string, AudioBuffer>()
 let bgm: HTMLAudioElement | null = null
 
+// BGM 끄기 설정은 다음 방문에도 유지한다 (저장소가 막혀 있으면 켜진 상태로 시작)
+const BGM_MUTED_KEY = 'dango_pang.bgmMuted'
+let bgmMuted = (() => {
+  try {
+    return localStorage.getItem(BGM_MUTED_KEY) === '1'
+  } catch {
+    return false
+  }
+})()
+
 function getCtx(): Ctx | null {
   if (ctx) return ctx
   const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
@@ -73,7 +83,21 @@ function unlock() {
     bgm.loop = true
     bgm.volume = SOUND.bgmVolume
   }
-  if (bgm.paused) bgm.play().catch(() => {})
+  if (!bgmMuted && bgm.paused) bgm.play().catch(() => {})
+}
+
+export const isBgmMuted = () => bgmMuted
+
+/** BGM 켜기/끄기 (효과음은 그대로) */
+export function setBgmMuted(muted: boolean) {
+  bgmMuted = muted
+  try {
+    localStorage.setItem(BGM_MUTED_KEY, muted ? '1' : '0')
+  } catch {
+    // 저장 못 해도 이번 세션 동안은 적용된다
+  }
+  if (muted) bgm?.pause()
+  else unlock()
 }
 
 /** 첫 사용자 입력에서 오디오 잠금 해제 + BGM 무한 재생 시작 */

@@ -46,9 +46,9 @@ button {
   height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
-  /* bg_main.png 가 있으면 그 위에, 없으면 그라데이션만 보임 */
+  /* 배경 그림 아래에 그라데이션을 깔아, 그림이 뜨기 전에도 비어 보이지 않게 */
   background:
-    url('/assets/bg_main.png') center / cover no-repeat,
+    url('./assets/bg.jpg') center / cover no-repeat,
     radial-gradient(120% 60% at 50% 0%, #fff6f0 0%, transparent 60%),
     linear-gradient(180deg, #fde7ec 0%, #fbeee0 55%, #f3e2cf 100%);
 }
@@ -78,6 +78,7 @@ button {
   min-height: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding-top: 30px;
   position: relative;
@@ -85,7 +86,7 @@ button {
 
 .order-card {
   position: relative;
-  flex: 1;
+  flex: 0 1 240px;
   height: 100%;
   border-radius: 22px;
   background: var(--card);
@@ -137,42 +138,6 @@ button {
   border: 2.5px solid currentColor;
 }
 
-.score {
-  position: relative;
-  z-index: 2;
-  width: 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  pointer-events: none;
-}
-.avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.avatar-fallback {
-  display: grid;
-  place-items: center;
-  font-size: 14px;
-  color: #fff;
-  background: linear-gradient(160deg, #b9c7e8, #8d9fcf);
-  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08);
-}
-.avatar-fallback.me {
-  background: linear-gradient(160deg, #ffc2d2, var(--pink-deep));
-}
-.score-num {
-  font-size: 34px;
-  line-height: 1;
-  animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-.score.player .score-num {
-  color: var(--pink-deep);
-}
-
 /* ───────── 중앙: 꼬치 2분할 ───────── */
 .mid {
   flex: var(--mid) 1 0;
@@ -188,38 +153,77 @@ button {
   flex: 1;
   border-radius: 26px;
 }
+/* 3D 는 이름표 아래부터 그려서 꼬치 끝이 이름표에 붙지 않게 */
+.col > .view {
+  top: 40px;
+}
 .col.cpu {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(198, 216, 248, 0.68);
+  box-shadow: 0 0 0 2px rgba(220, 230, 252, 0.8);
 }
 .col.me {
   flex: var(--my-flex);
-  background: radial-gradient(80% 60% at 50% 55%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.35));
+  background: radial-gradient(80% 60% at 50% 55%, rgba(255, 230, 239, 0.8), rgba(248, 186, 208, 0.68));
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 8px 24px rgba(236, 127, 160, 0.18);
 }
 
-.col-label {
+.col-head {
   position: absolute;
   z-index: 2;
   top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 14px;
-  color: var(--ink-soft);
-  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 12px;
+  border-radius: 99px;
+  color: #fff;
+  font-size: 15px;
   white-space: nowrap;
+  pointer-events: none;
 }
-.col.me .col-label {
+.col-head.cpu {
+  background: linear-gradient(160deg, #a9bbe6, #7f93c9);
+  box-shadow: 0 3px 0 #6a7db3;
+}
+.col-head.player {
+  font-size: 17px;
+  background: linear-gradient(160deg, #ffb3c8, var(--pink-deep));
+  box-shadow: 0 3px 0 #d0607f;
+}
+.col-head-avatar {
+  width: 22px;
+  height: 22px;
+  margin-left: -6px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.col-head-score {
+  min-width: 30px;
+  padding: 0 6px;
+  border-radius: 99px;
+  background: #fff;
+  font-size: 20px;
+  line-height: 26px;
+  text-align: center;
+  animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.col-head.cpu .col-head-score {
+  color: #6a7db3;
+}
+.col-head.player .col-head-score {
   color: var(--pink-deep);
-  font-size: 16px;
 }
 
 .plate {
   position: absolute;
   left: 50%;
-  bottom: 6%;
+  /* top 은 PlateAnchor 가 꼬치 밑동 위치로 맞춘다 */
+  top: 88%;
   width: 70%;
   max-width: 150px;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 .plate-fallback {
@@ -308,8 +312,44 @@ button {
   position: relative;
   height: 100%;
   border-radius: 28px;
-  background: linear-gradient(180deg, #f6e1c4, #ecd0ad);
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6), inset 0 -6px 0 rgba(180, 130, 90, 0.18), 0 6px 0 rgba(160, 110, 80, 0.15);
+  /* 배경 카운터와 같은 원목: 은은한 나뭇결 + 위가 밝은 그라데이션 */
+  background:
+    repeating-linear-gradient(176deg, rgba(150, 90, 40, 0) 0 14px, rgba(120, 65, 30, 0.08) 14px 16px, rgba(150, 90, 40, 0) 16px 31px),
+    linear-gradient(180deg, #e3ad7a, #c98a5a);
+  box-shadow: inset 0 3px 0 rgba(255, 224, 185, 0.6), inset 0 -6px 0 rgba(120, 65, 30, 0.24), 0 6px 0 rgba(110, 62, 32, 0.28);
+}
+
+/* ───────── BGM 켜기/끄기 (우측 상단) ───────── */
+.bgm-toggle {
+  position: absolute;
+  z-index: 6;
+  top: calc(env(safe-area-inset-top) + 4px);
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2px 0 rgba(160, 110, 120, 0.15);
+}
+.bgm-toggle.muted {
+  color: var(--ink-soft);
+}
+/* 터치 영역은 44px 로 넓힌다 */
+.bgm-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+.bgm-icon {
+  width: 16px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
 }
 
 /* ───────── 오버레이 ───────── */

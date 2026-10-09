@@ -18,22 +18,25 @@ export function Timer() {
   )
 }
 
-export function Score({ side }: { side: Side }) {
+/** 꼬치 칸 맨 위 이름표: 누구 칸인지 + 점수 */
+export function ColumnHead({ side }: { side: Side }) {
   const rawScore = useGame((s) => s[side].score)
   const last = useGame((s) => s.lastCompletion)
   // 점수는 마지막 알이 꽂히는 순간에 올라가 보이게
   const landed = useAfter(last?.side === side ? last.at : undefined)
   const score = landed ? rawScore : rawScore - 1
-  const isCpu = side === 'cpu'
-  const name = opponentName(useGame((s) => s.mode))
+  const opponent = opponentName(useGame((s) => s.mode))
+  const name = side === 'cpu' ? opponent : '나'
   return (
-    <div className={`score ${side}`}>
-      {isCpu ? (
-        <AssetImg name="cpu_avatar.png" className="avatar" alt={name} fallback={<div className="avatar avatar-fallback">{name}</div>} />
-      ) : (
-        <AssetImg name="icon_star.png" className="avatar star" fallback={<div className="avatar avatar-fallback me">나</div>} />
-      )}
-      <span key={score} className="score-num">
+    <div className={`col-head ${side}`}>
+      <AssetImg
+        name={side === 'cpu' ? 'cpu_avatar.png' : 'icon_star.png'}
+        className="col-head-avatar"
+        alt={name}
+        fallback={null}
+      />
+      <span className="col-head-name">{name}</span>
+      <span key={score} className="col-head-score">
         {score}
       </span>
     </div>
@@ -68,8 +71,8 @@ export function CompletionToast() {
       ? '간발의 차로 내가 먼저!'
       : '내가 먼저 완성!'
     : last.close
-      ? `간발의 차로 ${name}가 먼저…`
-      : `${name}가 먼저 완성…`
+      ? `간발의 차로 ${name}이 먼저…`
+      : `${name}이 먼저 완성…`
   return (
     <div key={last.at} className={`toast ${last.side}`}>
       {text}

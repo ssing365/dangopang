@@ -1,4 +1,4 @@
-import { ACTIVE_COLORS, GAME, type DangoColor } from './config'
+import { ACTIVE_COLORS, GAME, SIZES, type DangoColor } from './config'
 
 export const randRange = (min: number, max: number) => min + Math.random() * (max - min)
 export const pick = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]
@@ -50,7 +50,7 @@ export const TRAY_SLOTS: [number, number, number][] = Array.from({ length: GAME.
   const col = i % cols
   const jx = Math.sin(i * 12.9898) * 0.18
   const jz = Math.cos(i * 78.233) * 0.16
-  const x = (col - (cols - 1) / 2) * 1.32 + (row ? 0.33 : -0.2) + jx
-  const z = (row - 0.5) * 1.45 + jz
+  const x = (col - (cols - 1) / 2) * SIZES.traySpacingX + (row ? 0.33 : -0.2) + jx
+  const z = (row - 0.5) * SIZES.traySpacingZ + jz
   return [x, 0, z]
 })

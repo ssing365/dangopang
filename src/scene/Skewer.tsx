@@ -14,10 +14,13 @@ const stickGeometry = new THREE.CylinderGeometry(SIZES.skewerRadius, SIZES.skewe
 const tipGeometry = new THREE.ConeGeometry(SIZES.skewerRadius, 0.18, 12)
 const stickMaterial = new THREE.MeshStandardMaterial({ color: SIZES.skewerColor, roughness: 0.75 })
 
+/** 꼬치 밑동 높이 (접시가 여기 놓인다) */
+const STICK_BOTTOM_Y = -0.45
+
 export function Stick() {
   const half = SIZES.skewerLength / 2
   return (
-    <group position={[0, half - 0.45, 0]}>
+    <group position={[0, half + STICK_BOTTOM_Y, 0]}>
       <mesh geometry={stickGeometry} material={stickMaterial} />
       <mesh geometry={tipGeometry} material={stickMaterial} position={[0, half + 0.09, 0]} />
     </group>
@@ -70,6 +73,27 @@ function Finished({ item, dropHeight }: { item: FinishedSkewer; dropHeight: numb
       <Balls balls={item.balls} dropHeight={dropHeight} />
     </group>
   )
+}
+
+/** DOM 접시(.plate)를 꼬치 밑동 바로 아래에 맞춘다. 칸 높이가 바뀌어도 꼬치가 접시 가운데 서 있게 */
+function PlateAnchor({ trackId }: { trackId: string }) {
+  const camera = useThree((s) => s.camera)
+  const v = useRef(new THREE.Vector3())
+  const lastTop = useRef('')
+  useFrame(() => {
+    const view = document.getElementById(trackId)
+    const col = view?.parentElement
+    const plate = col?.querySelector<HTMLElement>('.plate')
+    if (!view || !col || !plate) return
+    const rect = view.getBoundingClientRect()
+    const p = v.current.set(0, STICK_BOTTOM_Y, 0).project(camera)
+    const top = `${rect.top - col.getBoundingClientRect().top + ((1 - p.y) / 2) * rect.height}px`
+    if (top !== lastTop.current) {
+      lastTop.current = top
+      plate.style.top = top
+    }
+  })
+  return null
 }
 
 /** 내 꼬치 n번째 칸이 화면 어디인지 FlightLayer 에 알려주기 위한 등록 */
@@ -127,6 +151,7 @@ export function SkewerScene({ side, trackId }: { side: Side; trackId: string }) 
       <PerspectiveCamera makeDefault position={[0, 2.2, 10.5]} fov={28} onUpdate={(c) => c.lookAt(0, 1.75, 0)} />
       <SoftLights dim={side === 'cpu' ? LIGHTS.cpuDim : 1} />
       {side === 'player' && <SlotProjector trackId={trackId} />}
+      <PlateAnchor trackId={trackId} />
 
       <group ref={shakeRef}>
         <group ref={stickRef}>

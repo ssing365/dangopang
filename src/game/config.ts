@@ -55,6 +55,9 @@ export const SIZES = {
   skewerLength: 4.3,
   skewerColor: '#e9c98f',
   trayBallScale: 1.1,
+  /** 트레이 알 간격 (가로 / 세로 줄) */
+  traySpacingX: 1.45,
+  traySpacingZ: 1.6,
   /** 대기 중 숨쉬기 진폭 */
   breatheAmp: 0.025,
   breatheSpeed: 2.2,
@@ -63,6 +66,27 @@ export const SIZES = {
   lumpFreq: 1.6,
   /** 모양 변형 가짓수 (seed 로 고름) */
   lumpVariants: 5,
+}
+
+/** 새 알을 트레이에 배달하는 꼬마 시바 연출 */
+export const DELIVERY = {
+  /** 시바 키 (월드 단위, 당고 지름 ≈ 1.1) */
+  height: 0.9,
+  /** 알 중심에서 시바까지 가로 거리: 처음 나타나는 곳 → 멈추는 곳 */
+  fromOffset: 1.2,
+  toOffset: 0.72,
+  /** 스르르 걸어 들어오는 시간 (이때쯤 알이 뿅 하고 놓인다) */
+  arriveMs: 220,
+  /** 알을 놓고 잠깐 머무는 시간 */
+  stayMs: 450,
+  /** 스르르 사라지는 시간 */
+  leaveMs: 320,
+  /** 등장 시간 중 투명→불투명에 쓰는 비율 / 퇴장 시간 중 옅어지는 비율 (짧을수록 원래 색으로 보이는 시간이 길다) */
+  fadeInPart: 0.4,
+  fadeOutPart: 0.5,
+  /** 종종걸음 높이 / 속도 */
+  hopAmp: 0.06,
+  hopSpeed: 0.03,
 }
 
 export const MATERIAL = {
@@ -118,8 +142,8 @@ export const SPRING = {
 export const LAYOUT = {
   maxWidth: 430,
   topPct: 20,
-  midPct: 50,
-  bottomPct: 30,
+  midPct: 56,
+  bottomPct: 24,
   /** 중앙 영역에서 내 꼬치 칸 비율 (CPU = 1) */
   myColumnFlex: 1.35,
 }

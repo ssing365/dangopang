@@ -44,7 +44,7 @@ npm run build    # 타입체크 + 프로덕션 빌드
 
 ## 에셋
 
-`public/assets/` 의 PNG(bg_main, logo, cpu_avatar, plate, icon_timer, icon_star)는 없어도 동작한다. `AssetImg` 가 로드 실패 시 CSS 플레이스홀더로 대체하므로, 파일만 넣으면 교체된다.
+게임 배경은 `src/assets/bg.jpg` (`.app` 의 CSS background). `public/assets/` 의 PNG(logo, cpu_avatar, plate, icon_timer, icon_star)는 없어도 동작한다. `AssetImg` 가 로드 실패 시 CSS 플레이스홀더로 대체하므로, 파일만 넣으면 교체된다.
 
 ## 디버깅 / 검증
 
